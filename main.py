@@ -1,11 +1,9 @@
 import sys
 import time
 import hashlib
-import requests
 from datetime import datetime, timedelta
 
 import coloring
-from PIL import Image, ImageDraw
 from telebot import TeleBot
 
 from settings import tg_channel
