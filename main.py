@@ -92,10 +92,13 @@ if __name__ == '__main__':
 
                         if price < avg_price and db.get_show(item_hash) is None:
                             db.add_show(item_hash)
-                            print(coloring.green(item))
+                            log_msg = (f"{name} x{count}\n"
+                                       f"Price: {price} | Avg: {avg_price}\n"
+                                       f"{location} - {guild} | {last_seen}\n")
+                            print(coloring.green(log_msg))
 
-                            img1 = Image.new("RGB", (450, 300), (0, 0, 0))
-                            draw = ImageDraw.Draw(img1)
+                            # img1 = Image.new("RGB", (450, 300), (0, 0, 0))
+                            # draw = ImageDraw.Draw(img1)
                             # rarity_txt = {
                             #     'normal': '🤍',
                             #     'fine': '💚',
