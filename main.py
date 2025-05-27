@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     bot_token = sys.argv[1]
     queries = sys.argv[2].split(',')
-    bot = TeleBot(token=bot_token)
+    bot = TeleBot(token=bot_token, parse_mode="HTML")
 
     db.init()
     print('~~* Bot Started *~~')
@@ -33,27 +33,28 @@ if __name__ == '__main__':
             for x in range(0, 1):
                 result = search(q)
 
-                if not result.data:
+                if not result["data"]:
                     continue
-                prices_list = [item.price.replace(",", '') for item in result.data]
+                data: list[dict] = result["data"]
 
+                prices_list = [int(item["price"].replace(",", '')) for item in data]
                 min_price = min(*prices_list)
                 max_price = max(*prices_list)
-                avg_price = round(robust_weighted_average(result.data))
+                avg_price = round(robust_weighted_average(prices_list))
 
-                for item in result.data:
+                for item in data:
                     try:
-                        name = item.name
-                        price = float(item.price.replace(',', ''))
-                        count = item.amount
-                        full_price = price * int(count)
-                        location = f"{item.trader_zone} | {item.trader_location}"
-                        guild = item.guild
-                        img = f"https://eso-hub.com{item.icon}"
-                        rarity = str(item.quality)
+                        name = item["name"]
+                        price = int(item["price"].replace(',', ''))
+                        count = int(item["amount"])
+                        full_price = price * count
+                        location = f"{item['trader_zone']} | {item['trader_location']}"
+                        guild = item['guild']
+                        img = f"https://eso-hub.com{item['icon']}"
+                        rarity = str(item['quality'])
                         traits = ''
-                        lvl = str(item.level)
-                        last_seen = item.last_seen
+                        lvl = str(item['level'])
+                        last_seen = item['last_seen']
 
                         item_data = db.get_item(name, rarity, traits, lvl)
                         item_hash = f'{name}:{price}:{location}:{guild}:{rarity}:{traits}:{lvl}:{full_price}'
@@ -127,9 +128,9 @@ if __name__ == '__main__':
                                   f"🔸 <b>Range:</b> {min_price} - {max_price}\n"
 
                             try:
-                                img2 = Image.open(requests.get(img, stream=True).raw).resize((100, 100))
-                                img1.paste(img2, (int(450 / 2 - img2.width / 2), int(300 / 2 - img2.height / 2)))
-                                bot.send_photo(tg_channel, img1, caption=msg)
+                                # img2 = Image.open(requests.get(img, stream=True).raw).resize((100, 100))
+                                # img1.paste(img2, (int(450 / 2 - img2.width / 2), int(300 / 2 - img2.height / 2)))
+                                bot.send_photo(tg_channel, img, caption=msg)
 
                             except:
                                 bot.send_message(tg_channel, msg)

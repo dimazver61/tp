@@ -1,9 +1,7 @@
 import requests
 
-from .data_types import ListingsResponse
 
-
-def search(query: str = 'Карта сокровищ Мертв') -> ListingsResponse:
+def search(query: str = 'Карта сокровищ Мертв') -> dict:
     headers = {
         'accept': 'application/json, text/plain, */*',
         'accept-language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,lb;q=0.6',
@@ -39,6 +37,5 @@ def search(query: str = 'Карта сокровищ Мертв') -> ListingsRes
                              params=params, headers=headers, json=json_data)
 
     response.raise_for_status()
-    print(response.json())
-    return ListingsResponse(**response.json())
+    return response.json()
 

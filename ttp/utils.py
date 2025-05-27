@@ -1,14 +1,12 @@
 from typing import List
 
-from .data_types import ListingItem
-
 
 def price_to_float(price_str: str) -> float:
     """Конвертирует строку цены в число."""
     return float(price_str.replace(",", "").replace(" ", ""))
 
 
-def robust_weighted_average(items: List[ListingItem], trim_percent: float = 0.1) -> float:
+def robust_weighted_average(prices: List[int], trim_percent: float = 0.1) -> float:
     """
     Вычисляет устойчивое среднее, учитывающее плотность распределения цен.
 
@@ -23,10 +21,9 @@ def robust_weighted_average(items: List[ListingItem], trim_percent: float = 0.1)
     Returns:
         Устойчивое среднее значение.
     """
-    if not items:
+    if not prices:
         return 0.0
 
-    prices = [price_to_float(item.price) for item in items]
     prices_sorted = sorted(prices)
 
     # Шаг 1: Усечение выбросов
@@ -43,8 +40,5 @@ def robust_weighted_average(items: List[ListingItem], trim_percent: float = 0.1)
 
     # Нормализация весов
     total_weight = sum(weights)
-    if total_weight == 0:
-        return np.mean(trimmed_prices)
-
     weighted_avg = sum(p * w for p, w in zip(trimmed_prices, weights)) / total_weight
     return weighted_avg
